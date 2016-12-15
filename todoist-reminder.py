@@ -64,6 +64,10 @@ if __name__ == "__main__":
         debug = _debug
     else:
         debug = lambda x: x 
+
+    if '-h' in argv or '--help' in argv:
+        print_help()
+        exit(0)
     
     skip_next=True
     api_key = ""
