@@ -1,6 +1,6 @@
 # todoist-reminder
 
-`todoist_daemon.py -a API_KEY [-d for debug]`
+`todoist-reminder.py -a API_KEY [-d for debug]`
 
 Adds the ability to define reminders in the task description.
 
