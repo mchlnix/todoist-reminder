@@ -57,7 +57,7 @@ def add_reminders( item ):
     debug( u'Updated items content to "{}"'.format( content ) )
 
 def print_help():
-    print "todoist_daemon.py -a API_KEY [-d for debug]"
+    print "todoist-reminder.py -a API_KEY [-d for debug]"
 
 if __name__ == "__main__":
     if '-d' in argv:
