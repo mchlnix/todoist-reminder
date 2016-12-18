@@ -38,12 +38,16 @@ def add_reminders( item ):
 
     content = item['content']
 
+    changed=False
+    
     for pattern, factor in zip( patterns, factors ):
 
         m = re.findall(pattern, content)
         
         if m == []:
             continue
+
+        changed=True
         
         new_content = re.sub( pattern, "", content ).strip()
     
@@ -53,8 +57,11 @@ def add_reminders( item ):
 
         content = new_content
         
-    api.items.get_by_id(item['id']).update(content=content)
-    debug( u'Updated items content to "{}"'.format( content ) )
+    if changed:
+        api.items.get_by_id(item['id']).update(content=content)
+        debug( u'Updated items content to "{}"'.format( content ) )
+
+    return changed
 
 def print_help():
     print "todoist-reminder.py -a API_KEY [-d for debug]"
@@ -103,8 +110,14 @@ if __name__ == "__main__":
             exit(2)
 
         items = api.items.all()
+
+        changed = False
+
         for item in items:
-            add_reminders( item )
-        api.commit()
+            changed = changed or add_reminders( item )
+        
+        if changed:
+            api.commit()
+        
         sleep(1)
 
