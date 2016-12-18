@@ -25,7 +25,7 @@ def print_info( message, category ):
         print( u'[{0}] {1}: {2}'.format( str( logtime() ), category, message ) )
     except UnicodeEncodeError:
         print( u'[{0}] UnicodeEncode Error caught.'.format( logtime() ) )
-    
+
 def _debug( message ):
     print_info( message, "DBG" )
 
@@ -39,24 +39,24 @@ def add_reminders( item ):
     content = item['content']
 
     changed=False
-    
+
     for pattern, factor in zip( patterns, factors ):
 
         m = re.findall(pattern, content)
-        
+
         if m == []:
             continue
 
         changed=True
-        
+
         new_content = re.sub( pattern, "", content ).strip()
-    
+
         for match in m:
             api.reminders.add(item['id'], service="push", minute_offset=int(match)*factor )
             log( u'Added reminder of {}min to "{}"'.format( int(match)*factor, new_content) )
 
         content = new_content
-        
+
     if changed:
         api.items.get_by_id(item['id']).update(content=content)
         debug( u'Updated items content to "{}"'.format( content ) )
@@ -70,12 +70,12 @@ if __name__ == "__main__":
     if '-d' in argv:
         debug = _debug
     else:
-        debug = lambda x: x 
+        debug = lambda x: x
 
     if '-h' in argv or '--help' in argv:
         print_help()
         exit(0)
-    
+
     skip_next=True
     api_key = ""
 
@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
     api = todoist.TodoistAPI(api_key)
 
-    while True:  
+    while True:
         resp = api.sync()
         if "error_tag" in resp.keys():
             if resp["error_tag"] == "AUTH_INVALID_TOKEN":
@@ -106,7 +106,7 @@ if __name__ == "__main__":
             else:
                 log( "Something went wrong when syncing" )
                 log( str(resp) )
-            
+
             exit(2)
 
         items = api.items.all()
@@ -115,9 +115,9 @@ if __name__ == "__main__":
 
         for item in items:
             changed = changed or add_reminders( item )
-        
+
         if changed:
             api.commit()
-        
+
         sleep(1)
 
